@@ -1,22 +1,24 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { getCoinsMarket } from "./services/api";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./pages/home/home";
-import FourZeroFour from "./pages/fourZeroFour/fourZeroFour";
 import Details from "./pages/details/details";
-import Header from "./components/header/header"
+import FourZeroFour from "./pages/fourZeroFour/fourZeroFour";
+import Header from "./components/header/header";
+import { usePersistentStorage } from "./customHooks/usePersistentStorage";
+
+ 
+ 
 
 function App() {
-  
   return (
     <div className="App">
-      <Header />
+    <Header />
       <Router>
         <Switch>
           <Route exact path="/">
             <Home />
           </Route>
-          <Route exact path="/details">
+          <Route exact path="/details/:id">
             <Details />
           </Route>
           <Route>

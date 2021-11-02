@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Table } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./table.css";
 
 const TableComponent = ({
@@ -10,9 +11,9 @@ const TableComponent = ({
   incrementPageNo,
   pageNo = 0,
   decrementButtonDisable = false,
+  showPagination = true,
+  containerClassName = "",
 }) => {
-  const [row, setRow] = useState([]);
-
   const getTableRow = () => {
     return tableData.map((rowObj, index) => {
       return (
@@ -20,12 +21,14 @@ const TableComponent = ({
           {headerData.map((v, index) => (
             <td key={v + index}>
               {v === "image" ? (
-                <img
-                  src={rowObj[v]}
-                  width="50px"
-                  alt="bitcoin icon"
-                  onLoad={() => console.log("image loaded")}
-                />
+                <Link to={`/details/${rowObj.id}`}>
+                  <img
+                    src={rowObj[v]}
+                    width="50px"
+                    alt="bitcoin icon"
+                    onLoad={() => console.log("image loaded")}
+                  />
+                </Link>
               ) : (
                 rowObj[v]
               )}
@@ -37,7 +40,7 @@ const TableComponent = ({
   };
 
   return (
-    <div>
+    <div className={containerClassName}>
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -50,16 +53,18 @@ const TableComponent = ({
         </thead>
         <tbody>{getTableRow()}</tbody>
       </Table>
-      <div className="table-pagination">
-        <Pagination>
-          <Pagination.Prev
-            onClick={decrementPageNo}
-            disabled={decrementButtonDisable}
-          />
-          <Pagination.Item>{pageNo}</Pagination.Item>
-          <Pagination.Next onClick={incrementPageNo} />
-        </Pagination>
-      </div>
+      {showPagination && (
+        <div className="table-pagination">
+          <Pagination>
+            <Pagination.Prev
+              onClick={decrementPageNo}
+              disabled={decrementButtonDisable}
+            />
+            <Pagination.Item>{pageNo}</Pagination.Item>
+            <Pagination.Next onClick={incrementPageNo} />
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };

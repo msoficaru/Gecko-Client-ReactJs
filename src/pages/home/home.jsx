@@ -5,9 +5,12 @@ import Spinner from "react-bootstrap/Spinner";
 import "./home.css";
 
 const Home = () => {
+  let initPage = sessionStorage.getItem("page");
+  if (initPage !== null) initPage = Number(initPage);
+
   const [list, setList] = useState([]);
   const [error, setError] = useState("");
-  const [tablePageNo, setTablePageNo] = useState(1);
+  const [tablePageNo, setTablePageNo] = useState(initPage || 1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,10 +23,12 @@ const Home = () => {
     async function fetchList() {
       setLoading(true);
       const res = await getCoinsMarket(getCoinsMarketParams);
+      console.log(res);
       if (res.data)
         setList(
           res.data.map((k) => {
             return {
+              id: k.id,
               image: k.image,
               name: k.name,
               symbol: k.symbol,
@@ -38,10 +43,11 @@ const Home = () => {
     }
 
     fetchList();
+    sessionStorage.setItem("page", tablePageNo);
   }, [tablePageNo]);
 
   function buildTableHeaderData() {
-    return Object.keys(list[0]);
+    return Object.keys(list[0]).filter((k) => k !== "id");
   }
 
   function handleNextTablePage() {
@@ -61,7 +67,7 @@ const Home = () => {
           variant="primary"
           className="spinner-center"
         />
-      ) : (
+      ) : list.length > 0 ? (
         <TableComponent
           headerData={buildTableHeaderData()}
           tableData={list}
@@ -70,6 +76,8 @@ const Home = () => {
           decrementButtonDisable={tablePageNo === 1}
           pageNo={tablePageNo}
         />
+      ) : (
+        <div style={{ color: "red" }}>{error}</div>
       )}
     </div>
   );
