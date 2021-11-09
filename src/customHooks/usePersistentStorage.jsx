@@ -1,36 +1,38 @@
-// import React, { useState } from 'react';
+import React, { useRef } from 'react';
 
 
-// /*
-// method: get | set
-// key: string
-// data: obj
-// type: local | session
-// */
-// export function  usePersistentStorage(method, key, data, type) {
-//     const [state, setState] = useState(data);
-//     const dataToBeStored = JSON.stringify(data);
+/**
+ * method: get | set
+ * key: string
+ * data: obj
+ * type: local | session
+ */
 
-   
+export function usePersistentStorage(method, key, data, type) {
+    console.log({method, key, data, type})
 
-//     switch (method) {
-//       case 'get':
-//         if (type === local) {
-//           setState(localStorage.getItem(key));
-//           break;
-//         } else if (type === "session") {
-//           setState(sessionStorage.getItem(key));
-//           break;
-//         }
+    const hookState = useRef();
 
-//       case 'set':
-//         if (type === local) {
-//           localStorage.setItem(key);
-//         } else if (type === "session") {
-//           return sessionStorage.setItem(key);
-//         }
-//         default:
-//             break;
-//     }
-//     return state;
-// }
+    const dataToBeStored = JSON.stringify(data);
+
+    switch(method) {
+        case 'get':
+            if(type === 'local'){
+                hookState.current = localStorage.getItem(key);
+                break;
+            }
+            else if(type === 'session'){
+                hookState.current = sessionStorage.getItem(key);
+                break;
+            }
+            break;
+        case 'set':
+            if(type === 'local')return localStorage.setItem(key, dataToBeStored);
+            else if(type === 'session') return sessionStorage.setItem(key, dataToBeStored);
+        default:
+            console.log("default")
+            break;
+    }
+
+    return JSON.parse(hookState.current);
+}
